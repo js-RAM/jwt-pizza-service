@@ -45,7 +45,7 @@ userRouter.put(
       return res.status(403).json({ message: 'unauthorized' });
     }
 
-    const updatedUser = await DB.updateUser(userId, name, email, password);
+    const updatedUser = await DB.updateUser(userId, name, email ?? user.email, password);
     const auth = await setAuth(updatedUser);
     res.json({ user: updatedUser, token: auth });
   })
