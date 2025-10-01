@@ -17,10 +17,11 @@ test('login', async () => {
 
   const { password, ...user } = { ...testUser, roles: [{ role: 'diner' }] };
   expect(loginRes.body.user).toMatchObject(user);
+  expect(password).toBe(testUser.password);
 });
 
 test('login-failed', async () => {
-  failedUser = { ...badUser, email: "invalid@email" };
+  const failedUser = { ...badUser, email: "invalid@email" };
   const loginRes = await request(app).put('/api/auth').send(failedUser);
   expect(loginRes.status).toBe(404);
 });
@@ -32,6 +33,7 @@ test('register', async () => {
 
   const { password, ...user } = { ...testUser, roles: [{ role: 'diner' }] };
   expect(registerRes.body.user).toMatchObject(user);
+  expect(password).toBe(testUser.password);
 });
 
 test('register-failed', async () => {

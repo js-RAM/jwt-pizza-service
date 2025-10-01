@@ -1,7 +1,6 @@
 const request = require('supertest');
 const app = require('../../service');
-const { loadTestUser, loadAdminUser } = require('./util');
-const { DB } = require('../../database/database.js');
+const { loadTestUser } = require('./util');
 
 let testUser;
 let testUserAuthToken;

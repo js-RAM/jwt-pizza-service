@@ -5,7 +5,6 @@ const { DB } = require('../../database/database.js');
 
 let testUser;
 let testUserAuthToken;
-let adminUser;
 let adminUserAuthToken;
 let testUserId;
 let testFranchise;
@@ -13,7 +12,7 @@ let testStore;
 
 beforeAll(async () => {
     ({ testUser, testUserAuthToken, testUserId } = await loadTestUser());
-    ({ adminUser, adminUserAuthToken } = await loadAdminUser());
+    ({ adminUserAuthToken } = await loadAdminUser());
     testFranchise = await DB.createFranchise({ 
         name: Math.random().toString(36).substring(2, 12),
         admins: [{
