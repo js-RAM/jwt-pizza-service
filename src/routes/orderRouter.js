@@ -4,6 +4,7 @@ const { Role, DB } = require('../database/database.js');
 const { authRouter } = require('./authRouter.js');
 const { asyncHandler, StatusCodeError } = require('../endpointHelper.js');
 const metrics = require('../metrics.js');
+const logging = require('../logging.js');
 
 const orderRouter = express.Router();
 
@@ -81,13 +82,18 @@ orderRouter.post(
     const orderReq = req.body;
     const order = await DB.addDinerOrder(req.user, orderReq);
     const start = Date.now();
+    const reqBody = { diner: { id: req.user.id, name: req.user.name, email: req.user.email }, order }
     const r = await fetch(`${config.factory.url}/api/order`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', authorization: `Bearer ${config.factory.apiKey}` },
-      body: JSON.stringify({ diner: { id: req.user.id, name: req.user.name, email: req.user.email }, order }),
+      body: JSON.stringify(reqBody),
     });
     const j = await r.json();
     const latency = Date.now() - start;
+    logging.log(r.ok ? "info" : "warn", "factory", {
+      reqBody: JSON.stringify(reqBody),
+      resBody: JSON.stringify(j)
+    })
     if (r.ok) {
       const total = orderReq.items.reduce((sum, item) => sum + item.price, 0);
       metrics.pizzaMetrics(orderReq.items.length, latency, total);
